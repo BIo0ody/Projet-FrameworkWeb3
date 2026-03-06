@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Traitement{% endblock %}
+
+{% block body %}
+    <h1>Création nouveau traitement</h1>
+
+    {{ include('traitement/_form.html.twig', { 'form': form }) }}
+
+    <a type="button" class="btn btn-secondary" href="{{ returnTo ?? path('app_traitement_index', { consultationId: consultationId }) }}">Retour à la liste</a>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}CarteBancaire index{% endblock %}
+
+{% block body %}
+    <h2>Information du compte</h2>
+    <ul>
+        <li>Nom : {{ app.user.nom }}</li>
+        <li>Prenom : {{ app.user.prenom }}</li>
+        <li>email : {{ app.user.email }}</li>
+    </ul>
+
+
+
+
+    <h1>Tous vos cartes bancaire</h1>
+
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr class="table-dark">
+                <th >Id</th>
+                <th>Prenom</th>
+                <th>Nom</th>
+                <th>Type</th>
+                <th>Numero</th>
+                <th>Expiration</th>
+                <th>CodeSecuriter</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for carte_bancaire in carte_bancaires %}
+            {% if carte_bancaire.user == app.user %}
+                <tr class="table-info">
+                    <td>{{ carte_bancaire.id }}</td>
+                    <td>{{ carte_bancaire.prenom }}</td>
+                    <td>{{ carte_bancaire.nom }}</td>
+                    <td>{{ carte_bancaire.type }}</td>
+                    <td>{{ carte_bancaire.numero }}</td>
+                    <td>{{ carte_bancaire.expiration ? carte_bancaire.expiration|date('Y-m') : '' }}</td>
+                    <td>{{ carte_bancaire.codeSecuriter }}</td>
+                    <td>
+                        <a type="button" class="btn btn-primary" href="{{ path('app_carte_bancaire_show', {'id': carte_bancaire.id}) }}">Afficher</a>
+                        <a type="button" class="btn btn-warning" href="{{ path('app_carte_bancaire_edit', {'id': carte_bancaire.id}) }}">Modifier</a>
+                        <a type="button" class="btn btn-danger" href="{{ path('app_carte_bancaire_delete', {'id': carte_bancaire.id}) }}">Supprimer</a>
+                    </td>
+                </tr>
+            {% endif %}
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a type="button" class="btn btn-secondary" href="{{ path('app_carte_bancaire_new') }}">Ajouter une nouvelle carte</a>
+{% endblock %}

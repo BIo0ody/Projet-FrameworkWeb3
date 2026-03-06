@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Patients{% endblock %}
+
+{% block body %}
+    <h1>Liste des patients</h1>
+
+    <form method="get" class="mb-3">
+        <input type="text" name="q" placeholder="Rechercher..." value="{{ searchTerm }}">
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+    </form>
+
+    <br>
+
+    <form method="get" class="mb-3">
+        <label for="sort">Trier par:</label>
+        <select name="sort" id="sort">
+            <option value="nom" {% if sortField == 'nom' %}selected{% endif %}>Nom</option>
+            <option value="prenom" {% if sortField == 'prenom' %}selected{% endif %}>Prénom</option>
+            <option value="ssn" {% if sortField == 'ssn' %}selected{% endif %}>Numéro de Sécurité Sociale</option>
+        </select>
+
+        <select name="direction" id="direction">
+            <option value="ASC" {% if sortDirection == 'ASC' %}selected{% endif %}>↑</option>
+            <option value="DESC" {% if sortDirection == 'DESC' %}selected{% endif %}>↓</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary">Filtrer</button>
+    </form>
+
+    <table >
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Numéro de Sécurité Sociale</th>
+            <th>Email</th>
+        </tr>
+        {% for c in patients %}
+            <tr>
+                <td>{{ c.patient.nom }}</td>
+                <td>{{ c.patient.prenom }}</td>
+                <td>{{ c.patient.ssn }}</td>
+                <td>{{ c.patient.email }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">Aucun patient trouvé</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    {% set totalPages = ((nbPatients / limit)|round(0, 'ceil')) %}
+
+    {% if totalPages < 1 %}
+        {% set totalPages = 1 %}
+    {% endif %}
+
+    {% if currentPage > 1 %}
+        <a type="button" class="btn btn-outline-primary" href="{{ path('app_user_patients', {page: currentPage - 1, sort: sortField, direction: sortDirection, q: searchTerm}) }}">Previous</a>
+    {% endif %}
+
+    {% if currentPage < totalPages %}
+        <a type="button" class="btn btn-outline-primary" href="{{ path('app_user_patients', {page: currentPage + 1, sort: sortField, direction: sortDirection, q: searchTerm}) }}">Next</a>
+    {% endif %}
+
+    <br>
+    <br>
+
+    <a>Page {{ currentPage }} sur {{ totalPages }}</a>
+
+{% endblock %}

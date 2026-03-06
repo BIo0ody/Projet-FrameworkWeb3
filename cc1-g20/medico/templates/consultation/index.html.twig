@@ -1,0 +1,126 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Consultations{% endblock %}
+
+{% block body %}
+    <h1>Liste des consultations</h1>
+
+    {% if is_granted('ROLE_MEDECIN') %}
+    <form method="get" class="mb-3">
+        <input type="text" name="q" placeholder="Rechercher..." value="{{ searchTerm }}">
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+    </form>
+
+    <br>
+
+    <form method="get" class="mb-3">
+        <label for="sort">Trier par:</label>
+        <select name="sort" id="sort">
+            <option value="nom" {% if sortField == 'nom' %}selected{% endif %}>Nom</option>
+            <option value="prenom" {% if sortField == 'prenom' %}selected{% endif %}>Prénom</option>
+            <option value="ssn" {% if sortField == 'ssn' %}selected{% endif %}>Numéro de Sécurité Sociale</option>
+            <option value="date" {% if sortField == 'date' %}selected{% endif %}>Date</option>
+        </select>
+
+        <select name="direction" id="direction">
+            <option value="ASC" {% if sortDirection == 'ASC' %}selected{% endif %}>↑</option>
+            <option value="DESC" {% if sortDirection == 'DESC' %}selected{% endif %}>↓</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary">Filtrer</button>
+    </form>
+    {% endif %}
+
+    {% if is_granted('ROLE_PATIENT') %}
+    <form method="get" class="mb-3">
+        <label for="sort">Trier par:</label>
+        <select name="sort" id="sort">
+            <option value="date" {% if sortField == 'date' %}selected{% endif %}>Date</option>
+            <option value="nom" {% if sortField == 'nom' %}selected{% endif %}>Nom</option>
+        </select>
+
+        <select name="direction" id="direction">
+            <option value="ASC" {% if sortDirection == 'ASC' %}selected{% endif %}>↑</option>
+            <option value="DESC" {% if sortDirection == 'DESC' %}selected{% endif %}>↓</option>
+        </select>
+
+        <label for="payer">Afficher les consultations:</label>
+        <select name="payer" id="payer">
+            <option value="" {% if payerFilter is null %}selected{% endif %}>Tous</option>
+            <option value="0" {% if payerFilter is same as(false) %}selected{% endif %}>A Payer</option>
+            <option value="1" {% if payerFilter is same as(true) %}selected{% endif %}>Payée</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary">Filtrer</button>
+    </form>
+    {% endif %}
+
+    <table  class="grid-table">
+        <tr>
+            <th>Age </th>
+            <th>Date </th>
+            <th>Description </th>
+            <th>Détail </th>
+            {% if is_granted('ROLE_PATIENT') %}
+                <th>Actions </th>
+            {% endif %}
+            {% if is_granted('ROLE_ADMIN')  or is_granted('ROLE_MEDECIN') %}
+                <th>Modifier </th>
+                <th>Supprimer </th>
+            {% endif %}
+        </tr>
+
+        {% for c in consultations %}
+        <tr>
+            <td>{{ c.age }}</td>
+            <td>{{ c.date|date('d/m/Y') }}</td>
+            <td>{{ c.description|slice(0,20) }}...</td>
+            {% if is_granted('ROLE_PATIENT') %}
+                <td>{{ c.medecin.nom }} {{ c.medecin.prenom }}</td>
+            {% endif %}
+            {% if app.user == c.patient and c.payer == false %}
+                <td>
+                    <a type="button" class="btn btn-primary" href="{{ path('app_payment', {'id': c.id}) }}">Payer</a>
+                </td>
+            {% endif %}
+
+           
+            <td>
+                <a type="button" class="btn btn-primary" href="{{ path('app_consultation_show', {'id': c.id}) }}">Voir</a>
+            </td>
+
+            {% if is_granted('ROLE_ADMIN')  or is_granted('ROLE_MEDECIN') %}
+
+                <td>
+                    <a type="button" class="btn btn-warning" href="{{ path('app_consultation_edit', {'id': c.id})}}">Modifier</a>
+
+                <td>
+                    <a type="button" class="btn btn-danger" href="{{ path('app_consultation_delete', {'id': c.id}) }}">Supprimer</a>
+                
+                </td>
+
+
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% set totalPages = ((totalConsultations / limit)|round(0, 'ceil')) %}
+
+    {% if totalPages < 1 %}
+        {% set totalPages = 1 %}
+    {% endif %}
+
+    {% if currentPage > 1 %}
+        <a type="button" class="btn btn-outline-primary" href="{{ path('app_consultation_index', {page: currentPage - 1, sort: sortField, direction: sortDirection, q: searchTerm, payer: payerFilter}) }}">Previous</a>
+    {% endif %}
+
+    {% if currentPage < totalPages %}
+        <a type="button" class="btn btn-outline-primary" href="{{ path('app_consultation_index', {page: currentPage + 1, sort: sortField, direction: sortDirection, q: searchTerm, payer: payerFilter}) }}">Next</a>
+    {% endif %}
+
+    <br>
+    <br>
+
+    <a>Page {{ currentPage }} sur {{ totalPages }}</a>
+{% endblock %}

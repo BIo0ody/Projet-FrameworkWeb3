@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Consultation{% endblock %}
+
+{% block body %}
+    <h1>Détail de la consultation</h1>
+
+    <ul>
+        <li><strong>Age :</strong> {{ consultation.age }}</li>
+        <li><strong>Date :</strong> {{ consultation.date|date('d/m/Y') }}</li>
+        <li><strong>Description :</strong> {{ consultation.description }}</li>
+        <li>
+            <strong>
+                Patient :
+                {% if consultation.patient.genre == "Homme" %}
+                    Monsieur
+                {% elseif consultation.patient.genre == "Femme" %}
+                    Madame
+                {% else %}
+                    ?
+                {% endif %}
+                {{ consultation.patient.nom }}
+            </strong>
+        </li>
+        <li>
+            <strong>
+                Medecin :
+                {% if consultation.medecin.genre == "Homme" %}
+                    Monsieur
+                {% elseif consultation.medecin.genre == "Femme" %}
+                    Madame
+                {% else %}
+                    ?
+                {% endif %}
+                {{ consultation.medecin.nom }}
+            </strong>
+        </li>
+        <li><strong>Payment effectuer :</strong> {% if consultation.payer %} oui {% else %} non {% endif %}</li>
+        <li><strong>Duree de la consultation :</strong> {{consultation.duree}} min</li>
+    </ul>
+
+    <br>
+    <a type="button" class="btn btn-primary" href="{{ path('app_consultation_index') }}">Retour à la liste</a>
+     
+    <a type="button" class="btn btn-secondary" href="{{ path('app_traitement_index', {'consultationId': consultation.id}) }}">Voir les traitements</a>
+
+    <br>
+
+    {% if is_granted('ROLE_ADMIN')  or consultation.medecin == app.user %}
+        <a type="button" class="btn btn-warning" href="{{ path('app_consultation_edit', {'id': consultation.id}) }}">Modifier</a>
+         
+        <a type="button" class="btn btn-danger" href="{{ path('app_consultation_delete', {'id': consultation.id}) }}">Supprimer</a>
+         
+        <a type="button" class="btn btn-success" href="{{ path('app_traitement_new', {'consultationId': consultation.id}) }}">Ajouter un traitement</a>
+    {% endif %}
+
+{% endblock %}

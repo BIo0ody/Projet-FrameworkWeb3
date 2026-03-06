@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello PaymentController!{% endblock %}
+
+{% block body %}
+    <h3>Paiement pour la consultation #{{ consultation.id }}</h3>
+
+    <p>Prix : {{ prixTotal }} €</p>
+
+    {% if consultation.payer %}
+        <p style="color:green;">Consultation déjà payée</p>
+    {% else %}
+
+    <form method="get">
+        <label >Choisir une carte bancaire :</label>
+
+        <select class="form-select bg-info text-black" name="carte" class="form-control" required>
+            <option class="badge bg-info text-black" value="">-- Sélectionner --</option>
+            {% for carte in cartes %}
+                <option class="badge bg-info text-black" value="{{ carte.id }}">
+                    {{ carte.type }} - **** **** **** {{ carte.numero|slice(-4) }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <br>
+
+        <button type="submit" class="btn btn-success">
+            Payer
+        </button>
+    </form>
+
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2>Confirmer la suppression</h2>
+
+    <p>Voulez-vous vraiment supprimer le traitement {{ traitement.medicament }} ?</p>
+
+    <form method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ traitement.id) }}">
+        <button class="btn btn-danger">Supprimer</button>
+        <a type="button" class="btn btn-secondary" href="{{ path('app_traitement_index', {'consultationId': consultationId}) }}">
+            Annuler
+        </a>
+    </form>
+{% endblock %}

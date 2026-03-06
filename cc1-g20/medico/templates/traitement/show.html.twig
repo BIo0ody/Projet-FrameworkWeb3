@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Traitement{% endblock %}
+
+{% block body %}
+    <h1>Traitement</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ traitement.id }}</td>
+            </tr>
+            <tr>
+                <th>Medicament</th>
+                <td>{{ traitement.medicament }}</td>
+            </tr>
+            <tr>
+                <th>Quantite</th>
+                <td>{{ traitement.quantite }}</td>
+            </tr>
+            <tr>
+                <th>Contenant</th>
+                <td>{{ traitement.contenant }}</td>
+            </tr>
+            <tr>
+                <th>Duree (jours)</th>
+                <td>{{ traitement.duree }}</td>
+            </tr>
+            <tr>
+                <th>Posologie</th>
+                <td>{{ traitement.posologie }}</td>
+            </tr>
+            <tr>
+                <th>Fait par pour</th>
+                <td>
+                    Traitement fait par 
+                    {% if traitement.consultation.medecin.genre == "Homme" %}
+                        Monsieur
+                    {% elseif traitement.consultation.medecin.genre == "Femme" %}
+                        Madame
+                    {% else %}
+                        ?
+                    {% endif %}
+                    {{ traitement.consultation.medecin.nom }}
+                    pour
+                    {% if traitement.consultation.patient.genre == "Homme" %}
+                        Monsieur
+                    {% elseif traitement.consultation.patient.genre == "Femme" %}
+                        Madame
+                    {% else %}
+                        ?
+                    {% endif %}
+                    {{ traitement.consultation.patient.nom }}.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a type="button" class="btn btn-primary" href="{{ returnTo ?? path('app_traitement_index', {'consultationId': consultationId}) }}">Retour à la liste</a>
+    
+    {% if is_granted('ROLE_ADMIN')  or traitement.consultation.medecin == app.user %}
+        <a type="button" class="btn btn-warning" href="{{ path('app_traitement_edit', {
+        'consultationId': consultationId,
+        'id': traitement.id,
+        'returnTo': returnTo
+        }) }}">Modifier</a>
+
+        {{ include('traitement/_delete_form.html.twig', {'consultationId': consultationId, 'traitement': traitement, 'returnTo': returnTo}) }}
+    {% endif %}
+{% endblock %}

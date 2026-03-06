@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Médecins{% endblock %}
+
+{% block body %}
+    <h1>Liste des médecins</h1>
+
+    <table >
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Email</th>
+        </tr>
+        {% for c in medecins %}
+            <tr>
+                <td>{{ c.medecin.nom }}</td>
+                <td>{{ c.medecin.prenom }}</td>
+                <td>{{ c.medecin.email }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">Aucun medecin trouvé</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    {% set totalPages = ((nbMedecins / limit)|round(0, 'ceil')) %}
+
+    {% if totalPages < 1 %}
+        {% set totalPages = 1 %}
+    {% endif %}
+
+    {% if currentPage > 1 %}
+        <a type="button" class="btn btn-outline-primary" href="{{ path('app_user_medecins', {page: currentPage - 1}) }}">Previous</a>
+    {% endif %}
+
+    {% if currentPage < totalPages %}
+        <a type="button" class="btn btn-outline-primary" href="{{ path('app_user_medecins', {page: currentPage + 1}) }}">Next</a>
+    {% endif %}
+
+    <br>
+    <br>
+
+    <a>Page {{ currentPage }} sur {{ totalPages }}</a>
+
+
+
+{% endblock %}

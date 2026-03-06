@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des traitements{% endblock %}
+
+{% block body %}
+    <h1>Liste des traitements</h1>
+
+    {% if is_granted('ROLE_PATIENT') %}
+        <form method="get" class="mb-3">
+            <label for="fini">Afficher les traitements:</label>
+            <select name="fini" id="fini">
+                <option value="" {% if finiFilter is null %}selected{% endif %}>Tous</option>
+                <option value="0" {% if finiFilter is same as(false) %}selected{% endif %}>En cours</option>
+                <option value="1" {% if finiFilter is same as(true) %}selected{% endif %}>Terminés</option>
+            </select>
+
+            <select name="direction" id="direction">
+                <option value="ASC" {% if sortDirection == 'ASC' %}selected{% endif %}>↑</option>
+                <option value="DESC" {% if sortDirection == 'DESC' %}selected{% endif %}>↓</option>
+            </select>
+
+            <button type="submit" class="btn btn-primary">Filtrer</button>
+        </form>
+    {% endif %}
+
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Id</th>
+                <th>Medicament</th>
+                <th>Quantite</th>
+                <th>Contenant</th>
+                <th>Duree</th>
+                <th>Posologie</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for traitement in traitements %}
+            <tr class="table-info">
+                <td>{{ traitement.id }}</td>
+                <td>{{ traitement.medicament }}</td>
+                <td>{{ traitement.quantite }}</td>
+                <td>{{ traitement.contenant }}</td>
+                <td>{{ traitement.duree }}</td>
+                <td>{{ traitement.posologie }}</td>
+                <td>
+                    <a type="button" class="btn btn-primary" href="{{ path('app_traitement_show', {
+                    'consultationId': consultation.id,
+                    'id': traitement.id,
+                    'returnTo': app.request.uri
+                    }) }}">Montrer</a>
+                
+                    {% if is_granted('ROLE_ADMIN')  or consultation.medecin == app.user %} 
+                        <a type="button" class="btn btn-warning" href="{{ path('app_traitement_edit', {
+                        'consultationId': consultation.id,
+                        'id': traitement.id,
+                        'returnTo': app.request.uri
+                        }) }}">Modifier</a>
+                        
+                        <a type="button" class="btn btn-danger" href="{{ path('app_traitement_delete', {
+                        'consultationId': consultation.id,
+                        'id': traitement.id,
+                        'returnTo': app.request.uri
+                        }) }}">Supprimer</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+    {% if totalPages < 1 %}
+        {% set totalPages = 1 %}
+    {% endif %}
+
+    {% if currentPage > 1 %}
+        <a type="button" class="btn btn-outline-primary" href="{{ path('app_traitement_all', {page: currentPage - 1, fini: finiFilter, direction: sortDirection}) }}">Previous</a>
+    {% endif %}
+
+    {% if currentPage < totalPages %}
+        <a type="button" class="btn btn-outline-primary" href="{{ path('app_traitement_all', {page: currentPage + 1, fini: finiFilter, direction: sortDirection}) }}">Next</a>
+    {% endif %}
+
+    <br>
+    <br>
+
+    <a>Page {{ currentPage }} sur {{ totalPages }}</a>
+
+    <a type="button" class="btn btn-info" href="{{ path('app_consultation_show', {'id': consultation.id}) }}">Retour à la consultation</a>
+{% endblock %}

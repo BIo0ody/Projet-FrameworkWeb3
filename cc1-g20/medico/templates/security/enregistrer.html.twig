@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Créer un nouvel utilisateur</h1>
+
+    {{ form_start(form) }}
+
+    {{ form_row(form.email) }}
+    {{ form_row(form.password) }}
+    {{ form_row(form.nom) }}
+    {{ form_row(form.prenom) }}
+    {{ form_row(form.ssn) }}
+    {{ form_row(form.genre) }}
+    {{ form_row(form.roles) }}
+
+    <button class="btn btn-primary mt-3">Enregistrer</button>
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}
