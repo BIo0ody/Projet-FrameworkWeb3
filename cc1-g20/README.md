@@ -1,7 +1,3 @@
-Baptiste Canault, baptiste.canault1@etu.univ-orleans.fr
-Jeremy Carre, jeremy.carre1@etu.univ-orleans.fr
-Theo Bourgeois, theo.bourgeois@etu.univ-orleans.fr
-Anthony Grosmaire, anthony.grosmaire@etu.univ-orleans.fr
 
 Q1)
 - Dans une invite de commande à l'endroit où on veut que le projet soit :
